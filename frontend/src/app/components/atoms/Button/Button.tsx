@@ -2,7 +2,7 @@
 
 import React from "react";
 
-type ButtonProps = {
+interface ButtonProps {
   children: React.ReactNode;
   type?: "button" | "submit" | "reset";
   onClick?: () => void;

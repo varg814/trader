@@ -1,10 +1,10 @@
 'use client';
 import React from 'react';
 
-type InputProps = {
+interface InputProps {
   type?: string;
   name?: string;
-  value?: string;
+  value?: string | number;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
   className?: string;

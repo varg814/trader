@@ -1,8 +1,10 @@
-'use client'
+"use client";
 import { useRouter } from "next/navigation";
 import { deleteCookie, getCookie } from "cookies-next";
 import React, { useState, useEffect } from "react";
-import Button from "./components/atoms/Button/Button";
+import Button from "./components/atoms/button/Button";
+import ProductForm from "./components/molecules/productForm/ProductForm";
+import ProductCard from "./components/molecules/productCard/ProductCard";
 
 interface User {
   fullName: string;
@@ -12,19 +14,53 @@ interface User {
   updatedAt?: string;
 }
 
+interface Product {
+  title: string;
+  description: string;
+  price: number;
+}
+
 const Page = () => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<Product[] | null>(null);
+  const [form, setForm] = useState(false);
   const router = useRouter();
+
+  const toggleForm = () => {
+    setForm((prev) => !prev);
+  };
 
   useEffect(() => {
     const token = getCookie("accessToken");
-
     if (!token) {
       router.push("/auth/sign-in");
       return;
     }
+    const getProducts = async () => {
+      try {
+        const respProducts = await fetch("http://localhost:5000/products", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (respProducts.status === 200) {
+          const data = await respProducts.json();
+          setProducts(data);
+        }
+      } catch (error) {
+        console.log(error);
+        deleteCookie("accessToken");
+        router.push("/auth/sign-in");
+      }
+    };
 
+    getProducts();
+  }, [router]);
+
+  useEffect(() => {
+    const token = getCookie("accessToken");
+    if (!token) {
+      router.push("/auth/sign-in");
+      return;
+    }
     const getUser = async () => {
       try {
         const resp = await fetch("http://localhost:5000/auth/current-user", {
@@ -43,34 +79,36 @@ const Page = () => {
         console.log(error);
         deleteCookie("accessToken");
         router.push("/auth/sign-in");
-      } finally {
-        setLoading(false);
       }
     };
 
     getUser();
   }, [router]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   if (!user) {
     return null;
   }
 
-    const handleLogout = () => {
+  const handleLogout = () => {
     deleteCookie("accessToken");
     router.push("/auth/sign-in");
   };
 
   return (
-    <div>
+    <div className="flex flex-col items-center">
       <h1>{user.fullName}</h1>
       <h1>{user.email}</h1>
-      <Button onClick={handleLogout}>
-        Log Out
-      </Button>
+      <Button onClick={handleLogout} className="bg-red-500 hover:bg-red-800 text-white">Log Out</Button>
+      <Button onClick={toggleForm} className="bg-green-500 hover:bg-green-800 text-white">Add a Product</Button>
+      {form && <ProductForm />}
+      {products?.map((product, index) => (
+        <ProductCard
+          key={index}
+          title={product.title}
+          description={product.description}
+          price={product.price}
+        />
+      ))}
     </div>
   );
 };

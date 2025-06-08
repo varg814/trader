@@ -7,7 +7,7 @@ productRouter.get("/", async (req, res) => {
   try {
     const products = await productModel
       .find()
-      .populate("createdBy", "fullName email") // optional: show who created it
+      .populate("createdBy", "fullName email")
       .sort({ createdAt: -1 });
 
     res.json(products);
@@ -36,9 +36,9 @@ productRouter.get("/:id", async (req, res) => {
 // POST /products → protected → create new product
 productRouter.post("/", async (req, res) => {
   try {
-    const { title, description, price, imageUrl } = req.body;
+    const { title, description, price } = req.body;
 
-    if (!title || !description || !price || !imageUrl) {
+    if (!title || !description || !price) {
       return res.status(400).json({ error: "Missing required fields." });
     }
 
@@ -46,8 +46,7 @@ productRouter.post("/", async (req, res) => {
       title,
       description,
       price,
-      imageUrl,
-      createdBy: req.userId, // from isAuth middleware
+      createdBy: req.userId,
     });
 
     res.status(201).json(newProduct);
