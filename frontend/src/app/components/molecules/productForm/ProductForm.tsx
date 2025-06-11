@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import Label from "../../atoms/label/Label";
-import Input from "../../atoms/input/Input";
-import Button from "../../atoms/button/Button";
+import Label from '../../atoms/label/Label';
+import Input from '../../atoms/input/Input'
+import Button from '../../atoms/button/Button';
 import { getCookie } from "cookies-next";
 
 const ProductForm = () => {
