@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import Label from "../../../../../src/app/components/atoms/label/Label";
-import Input from "../../../../../src/app/components/atoms/input/Input";
-import Button from "../../../../../src/app/components/atoms/button/Button";
+import Label from "@/app/components/atoms/label/Label";
+
+import Input from "@/app/components/atoms/input/Input";
+
+import Button from "@/app/components/atoms/button/Button";
 import { getCookie } from "cookies-next";
 
 const ProductForm = () => {
@@ -73,7 +75,12 @@ const ProductForm = () => {
         />
       </div>
 
-      <Button type="submit" className="bg-green-500 hover:bg-green-800 text-white">Add a Product</Button>
+      <Button
+        type="submit"
+        className="bg-green-500 hover:bg-green-800 text-white"
+      >
+        Add a Product
+      </Button>
     </form>
   );
 };

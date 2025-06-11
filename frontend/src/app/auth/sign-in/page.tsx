@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import Input from '../../../../src/app/components/atoms/input/Input'
-import Button from '../../../../src/app/components/atoms/button/Button'
+import Input from "@/app/components/atoms/input/Input";
+
+import Button from "@/app/components/atoms/button/Button";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { setCookie } from "cookies-next";
