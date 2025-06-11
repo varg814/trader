@@ -73,7 +73,7 @@ const ProductForm = () => {
         />
       </div>
 
-      <Button type="submit">Add a Product</Button>
+      <Button type="submit" className="bg-green-500 hover:bg-green-800 text-white">Add a Product</Button>
     </form>
   );
 };

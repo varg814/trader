@@ -7,6 +7,7 @@ import ProductForm from "./components/molecules/productForm/ProductForm";
 import ProductCard from "./components/molecules/productCard/ProductCard";
 
 interface User {
+  _id: string;
   fullName: string;
   email: string;
   isAdmin: boolean;
@@ -15,9 +16,16 @@ interface User {
 }
 
 interface Product {
+  _id: string;
   title: string;
   description: string;
   price: number;
+  createdBy: {
+    _id: string;
+    fullName: string;
+    email: string;
+  };
+  currentUserId: string;
 }
 
 const Page = () => {
@@ -94,19 +102,68 @@ const Page = () => {
     router.push("/auth/sign-in");
   };
 
+  const handleDelete = async () => {
+    const token = getCookie("accessToken");
+    if (!token) {
+      router.push("/auth/sign-in");
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:5000/users/${user._id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert("Account deleted successfully.");
+        deleteCookie("accessToken");
+        router.push("/auth/sign-in");
+      } else {
+        alert(`Error: ${result.error}`);
+      }
+    } catch (error) {
+      console.log("Error deleting user:", error);
+      alert("Failed to delete account.");
+    }
+  };
+
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center bg-gray-200 gap-5">
       <h1>{user.fullName}</h1>
       <h1>{user.email}</h1>
-      <Button onClick={handleLogout} className="bg-red-500 hover:bg-red-800 text-white">Log Out</Button>
-      <Button onClick={toggleForm} className="bg-green-500 hover:bg-green-800 text-white">Add a Product</Button>
+      <h1>{user._id}</h1>
+      <Button
+        onClick={handleLogout}
+        className="bg-red-500 hover:bg-red-800 text-white"
+      >
+        Log Out
+      </Button>
+      <Button
+        onClick={toggleForm}
+        className={`${
+          form
+            ? "bg-red-500 hover:bg-red-800"
+            : "bg-green-500 hover:bg-green-800"
+        } text-white`}
+      >
+        {form ? "cancel" : "add a product"}
+      </Button>
+      <Button onClick={handleDelete}>delete account</Button>
       {form && <ProductForm />}
       {products?.map((product, index) => (
         <ProductCard
           key={index}
+          _id={product._id}
           title={product.title}
           description={product.description}
           price={product.price}
+          createdBy={product.createdBy._id}
+          currentUserId={user._id}
         />
       ))}
     </div>
